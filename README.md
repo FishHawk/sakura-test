@@ -19,7 +19,8 @@ Sakura-13B-Galgame发布于[贴吧](https://tieba.baidu.com/p/8612129239)，[Hug
 原文选自[虽然转生为和风幻想的忧郁工口游戏的无名战斗员，但是周围的女人都是讨厌的预感/第一話　月が奇麗ですね](https://books.fishhawk.top/novel/hameln/232822/3)。
 
 GPT3使用的模型是`text-davinci-002-render-sha`。
-与GPT3的对比参考`text.sa-packed`。
+
+[结果对比](https://github.com/FishHawk/sakura-test/blob/main/text.sa-packed)。
 
 
 
@@ -27,12 +28,16 @@ GPT3使用的模型是`text-davinci-002-render-sha`。
 
 `test_short_lines.py`
 
-1选自[黑之战记/047　登場人物紹介](https://novelup.plus/story/206612087/107560602)
-2～5选自[黑之战记/038　第６話：花の都](https://books.fishhawk.top/novel/novelup/206612087/151713139)
+原文来源：
 
-百度/有道/GPT3均来自我的[翻译站](https://books.fishhawk.top)，翻译的时候有上下文。
-Claude/Sakura均来自于手动测试，翻译的时候只有单句。
-GPT3使用的模型是`text-davinci-002-render-sha`。
+- 1选自[黑之战记/047　登場人物紹介](https://novelup.plus/story/206612087/107560602)
+- 2～5选自[黑之战记/038　第６話：花の都](https://books.fishhawk.top/novel/novelup/206612087/151713139)
+
+翻译说明：
+
+- 百度/有道/GPT3均来自我的[翻译站](https://books.fishhawk.top)，翻译的时候有上下文。
+- Claude/Sakura均来自于手动测试，翻译的时候只有单句。
+- GPT3使用的模型是`text-davinci-002-render-sha`。
 
 | 原文   | エレインに協力する代わりに仲介を頼んだ。 |
 | ------ | ---------------------------------------- |
