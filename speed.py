@@ -1,18 +1,11 @@
-from typing import List
+import argparse
 import time
 import requests
 
-CARD = "A100"
-HOST = "192.168.1.162:5002"
-URI = f"http://{HOST}/api/v1/generate"
 
-# A100 4bit :5002
-# 3090 4bit :5000
-
-
-def translate(line: List[str]):
+def translate(endpoint, seg):
     prompt = "<reserved_106>将下面的日文文本翻译成中文：{text}<reserved_107>".format(
-        text="\n".join(line)
+        text="\n".join(seg)
     )
     request = {
         "prompt": prompt,
@@ -56,16 +49,16 @@ def translate(line: List[str]):
         "stopping_strings": [],
     }
 
-    response = requests.post(URI, json=request)
+    response = requests.post(endpoint, json=request)
 
     if response.status_code == 200:
         result = response.json()["results"][0]["text"].split("\n")
-        if len(result) == len(line):
+        if len(result) == len(seg):
             return True
     return False
 
 
-def iter_book(book: List[str]):
+def iter_book(book):
     limit = 500
     seg = []
     count = 0
@@ -79,13 +72,28 @@ def iter_book(book: List[str]):
             count += len(line)
 
 
-if __name__ == "__main__":
+def test(card, model, test_time_limit):
+    PORTS = {
+        "3090": {
+            "4bit": "5000",
+            "8bit": "5001",
+        },
+        "A100": {
+            "4bit": "5002",
+            "8bit": "5003",
+        },
+    }
+
+    port = PORTS[card][model]
+    if not port:
+        raise "端口不存在"
+    endpoint = f"http://192.168.1.162:{port}/api/v1/generate"
+
     with open("book.txt") as f:
         book = [line.replace("　", " ").strip() for line in f.readlines()]
         book = [line for line in book if len(line) > 0]
 
     ts_start = time.time()
-    test_time_limit = 2 * 60
 
     count_total = 0
     count_success = 0
@@ -93,7 +101,7 @@ if __name__ == "__main__":
     count_seg_success = 0
 
     for seg, count in iter_book(book):
-        is_success = translate(seg)
+        is_success = translate(endpoint=endpoint, seg=seg)
         count_total += count
         count_seg_total += 1
         if is_success:
@@ -104,7 +112,7 @@ if __name__ == "__main__":
         print(f"{test_time:.2f} {is_success} {count}")
         if test_time > test_time_limit:
             print("")
-            print(f"{CARD} {HOST}")
+            print(f"{card} {model}")
             print(f"Time: {test_time:.2f}s")
             print(f"Char: {count_success}/{count_total}")
             print(f"Seg:  {count_seg_success}/{count_seg_total}")
@@ -112,3 +120,20 @@ if __name__ == "__main__":
             speed_total = count_total / test_time
             print(f"CharSpeed:  {speed_success:.2f}/{speed_total:.2f}")
             break
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="ProgramName",
+        description="What the program does",
+        epilog="Text at the bottom of help",
+    )
+    parser.add_argument("card")
+    parser.add_argument("model")
+    parser.add_argument("-t", "--test-time-limit", type=int, default=1)
+    args = parser.parse_args()
+    test(
+        card=args.card,
+        model=args.model,
+        test_time_limit=args.test_time_limit * 60,
+    )
