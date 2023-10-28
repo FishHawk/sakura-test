@@ -82,6 +82,10 @@ def test(card, model, test_time_limit):
             "4bit": "5002",
             "8bit": "5003",
         },
+        "A800": {
+            "4bit": "5004",
+            "8bit": "5005",
+        },
     }
 
     port = PORTS[card][model]
