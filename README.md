@@ -1,47 +1,8 @@
-# Sakura-13B-Galgame 模型轻小说翻译性能测试
+# Sakura-13B-LNovel 模型轻小说翻译性能测试
 
-Sakura-13B-Galgame 发布于[贴吧](https://tieba.baidu.com/p/8612129239)，[Huggingface](https://huggingface.co/sakuraumi/Sakura-13B-Galgame)。
+Sakura-13B-Galgame 发布于[贴吧](https://tieba.baidu.com/p/8612129239)，[Huggingface](https://huggingface.co/SakuraLLM)。
 
-版本：v0.8
-
-**FastChat 有些参数无法输入，所以结果会不正常。之前的测试结果报废**
-
-## 目前结论
-
-- 速度上超过 GPT，不及有道。
-- 效果上超过 GPT 和 Claude。文学性很高。存在漏翻，但不影响阅读。
-- 作为 AI 模型输出的稳定程度远超 GPT。
-
-## 数值测试
-
-- 以小说 books.txt 为输入，分段长度上限为 500 字符。
-- 全量模型由于无法在 3090 和 4090 上运行，没有测试的意义。
-- 4090 暂时没有空闲的卡可以测试，之后会补上。
-
-| 显卡/模型 | 翻译速度（日文字符/每秒） | 翻译 10 万字需要的时间 |
-| --------- | ------------------------- | ---------------------- |
-| 3090/4bit | 46.16                     | 36.10 分钟             |
-| 3090/8bit | 30.99                     | 53.78 分钟             |
-| 4090/4bit |                           |                        |
-| 4090/8bit |                           |                        |
-| A800/4bit | 62.22                     | 26.79 分钟             |
-| A800/8bit | 57.62                     | 28.93 分钟             |
-
-| 显卡/模型 | 功耗      | 利用率 |
-| --------- | --------- | ------ |
-| 3090/4bit | 295W/350W | 48%    |
-| 3090/8bit | 334W/350W | 55%    |
-| 4090/4bit |           |        |
-| 4090/8bit |           |        |
-| A800/4bit | 187W/300W | 98%    |
-| A800/8bit | 245W/300W | 92%    |
-
-| 显卡/模型 | 显存              |
-| --------- | ----------------- |
-| 3090/4bit | 14286MiB/24576MiB |
-| 3090/8bit | 20708MiB/24576MiB |
-
-## 效果测试
+本次实验旨在对比 Sakura0.8 和 0.9 版本之间的区别。
 
 需要注意的是:
 
@@ -53,38 +14,27 @@ Sakura-13B-Galgame 发布于[贴吧](https://tieba.baidu.com/p/8612129239)，[Hu
 
 - 测试全是我个人判断，我的日语水平约在认识五十音，会网上搜字典这一档。
 
----
+## 测试结果
 
-**翻译无限重复问题**
+- **[TB1:和風ファンタジーな鬱エロゲーの名無し戦闘員に転生したんだが周囲の女がヤベー奴ばかりで嫌な予感しかしない件](https://books.fishhawk.top/novel/hameln/232822)**
 
-有时候 Sakura 会无限重复一个词直到 token 限制，[这里](https://github.com/FishHawk/sakura-test/blob/main/repeat_example.md)收集了会触发这个问题的 Prompt。
+  - [测试章节](https://books.fishhawk.top/novel/hameln/232822/5) / [翻译对比](https://github.com/FishHawk/sakura-test/blob/main/tb1.translation.txt) / [错误分析](https://github.com/FishHawk/sakura-test/blob/main/tb1.report.md)
+  - 章节特点：很多长句。
 
----
+- **[TB2:大ハズレだと追放された転生重騎士はゲーム知識で無双する](https://books.fishhawk.top/novel/syosetu/n8465gx)**
 
-**[和風ファンタジーな鬱エロゲーの名無し戦闘員に転生したんだが周囲の女がヤベー奴ばかりで嫌な予感しかしない件](https://books.fishhawk.top/novel/hameln/232822)**
+  - [测试章节](https://books.fishhawk.top/novel/syosetu/n8465gx/18) / [翻译对比](https://github.com/FishHawk/sakura-test/blob/main/tb2.translation.txt) / [错误分析](https://github.com/FishHawk/sakura-test/blob/main/tb2.report.md)
+  - 章节特点：网游，存在状态表。
+  - 测试结果：0.9 整体来说更加准确，不过提升不大。一些专有名词翻译也更加稳定。值得一提的是，0.9 出现了错行。
 
-[错误分析](https://github.com/FishHawk/sakura-test/blob/main/ana-1.md)
+- **[TB3:腹ペコ要塞は異世界で大戦艦が作りたい](https://books.fishhawk.top/novel/syosetu/n2749hf)**
 
-temperatur:1.0; top_p:0.5 (旧参数)
+  - [测试章节](https://books.fishhawk.top/novel/syosetu/n2749hf/4) / [翻译对比](https://github.com/FishHawk/sakura-test/blob/main/tb3.translation.txt) / [错误分析](https://github.com/FishHawk/sakura-test/blob/main/tb3.report.md)
+  - 章节特点：科幻，很多片假名的专有名词。
+  - 测试结果：0.9 整体来说更加准确，不过提升不大。0.9 理解的专有名词更多。
 
-测试目的：
+- **[TB4:今村司の逆転性活](https://books.fishhawk.top/novel/syosetu/n4885cd)**
 
-- 测试 Sakura 模型的基本性能。
-- 测试 Sakura 对长句的处理能力。
-
----
-
-**[今村司の逆転性活](https://books.fishhawk.top/novel/syosetu/n4885cd)**
-
-**注意本小说有 R18 情节**
-
-[错误分析](https://github.com/FishHawk/sakura-test/blob/main/ana-2.md)
-
-temperatur:0.1; top_p:0.3
-
-测试目的：
-
-- 对于男女反转和美丑反转这类剧情，Sakura 会不会被常识影响。
-- 对于现代恋爱小说的翻译效果。
-
-实际测试下来，反转剧情有些地方会翻译错，但还在接受范围内。不过 Sakura 对平假名的名字处理的很不稳定，比如网名。这点有道反而处理的比较好。尽管大多数这种问题都能通过术语表解决，但是有些名字的变形就没办法了，比如结巴地叫人名字。
+  - [测试章节](https://books.fishhawk.top/novel/syosetu/n4885cd/2) / [翻译对比](https://github.com/FishHawk/sakura-test/blob/main/tb4.translation.txt) / [错误分析](https://github.com/FishHawk/sakura-test/blob/main/tb4.report.md)
+  - 章节特点：R18，贞操逆转。
+  - 测试结果：0.9 整体来说更加准确，不过提升不大。0.9 用词比较直白，更倾向保持原文结构。
