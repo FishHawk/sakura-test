@@ -3,28 +3,30 @@ def read_file(filename):
         return f.read().splitlines()
 
 
-def cb(jp, zh8, zh9, target):
-    print(f"{jp} + {zh8} + {zh9} => {target}")
-    lines_jp = read_file(jp)
-    lines_zh8 = read_file(zh8)
-    lines_zh9 = read_file(zh9)
+def cb(zh, zh9, target):
+    print(f"{zh} + {zh9} => {target}")
+    lines_zh = read_file(zh)
+    lines_zh9 = [l for l in read_file(zh9) if l]
 
     lines_target = []
-    for lines in zip(lines_jp, lines_zh8, lines_zh9):
-        if lines[0]:
-            lines_target += lines
+    count = 0
+    for lines in lines_zh:
+        if lines:
+            lines_target.append(lines)
+            count += 1
+            if count % 3 == 0:
+                lines_target.append(lines_zh9.pop(0))
         else:
             lines_target.append("")
 
     with open(target, "w") as f:
-        f.write("jp\nsakura-0.8\nsakura-0.9\n\n")
+        f.write("jp\nsakura-0.8\nsakura-0.9\nsakura-0.9.1\n\n")
         f.write("\n".join(lines_target))
 
 
-for i in range(1, 6):
+for i in range(1, 5):
     cb(
-        f"tb{i}.txt",
+        f"tb{i}.translation.txt",
         f"zh.Ys.tb{i}.txt",
-        f"zh.Ys.tb9-{i}.txt",
         f"tb{i}.translation.txt",
     )
